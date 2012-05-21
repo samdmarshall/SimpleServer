@@ -59,7 +59,9 @@ static Server *sharedInstance = nil;
 		while (run_state) {
 			connection=accept(listener, NULL, NULL);
 			if (connection) {
-				write(connection, "hello world!\n", 14);
+				char response[256];
+				read(connection, response, 256);
+				write(connection, "world!\n", 8);
 			}
 		}
 		close(listener);

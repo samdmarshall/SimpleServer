@@ -25,7 +25,6 @@
 		22E96D35156AF4630094C595 /* ServerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServerViewController.h; sourceTree = "<group>"; };
 		22E96D71156AF6A00094C595 /* Server.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Server.h; sourceTree = "<group>"; };
 		22E96D72156AF6A00094C595 /* Server.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Server.m; sourceTree = "<group>"; };
-		22E96DE5156AFFF00094C595 /* DataStructs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataStructs.h; sourceTree = "<group>"; };
 		256AC3D80F4B6AC300CF3369 /* ServerAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServerAppDelegate.h; sourceTree = "<group>"; };
 		256AC3D90F4B6AC300CF3369 /* ServerAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ServerAppDelegate.m; sourceTree = "<group>"; };
 		256AC3F00F4B6AF500CF3369 /* Server_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Server_Prefix.pch; sourceTree = "<group>"; };
@@ -95,7 +94,6 @@
 				22E96D35156AF4630094C595 /* ServerViewController.h */,
 				22E96D71156AF6A00094C595 /* Server.h */,
 				22E96D72156AF6A00094C595 /* Server.m */,
-				22E96DE5156AFFF00094C595 /* DataStructs.h */,
 			);
 			name = Server;
 			sourceTree = "<group>";

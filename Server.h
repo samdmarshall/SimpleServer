@@ -12,8 +12,6 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <netdb.h>
-#import "DataStructs.h"
-
 
 @interface Server : NSObject {
 	int32_t listener;
