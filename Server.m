@@ -17,6 +17,7 @@
 @synthesize server_address;
 @synthesize run_state;
 @synthesize active_connections;
+@synthesize client_cleanup;
 
 static Server *sharedInstance = nil;
 
@@ -35,7 +36,6 @@ static Server *sharedInstance = nil;
 		memset(&server_address, 0, sizeof(server_address));
 		run_state = false;
 		active_connections = [[NSArray alloc] init];
-		[NSTimer scheduledTimerWithTimeInterval:10 target:self selector:@selector(disconnectTimedOutSessions) userInfo:nil repeats:YES];
 	}
 	return self;
 }
@@ -46,9 +46,12 @@ static Server *sharedInstance = nil;
 
 - (void)setServerState:(BOOL)new_state {
 	run_state = new_state;
+	if (!run_state)
+		[self terminateExistingConnections];
 }
 
 - (void)runServer {
+	client_cleanup = [NSTimer scheduledTimerWithTimeInterval:10 target:self selector:@selector(disconnectTimedOutSessions) userInfo:nil repeats:YES];
 	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,0), ^{
 		listener = socket(AF_INET, SOCK_STREAM, 0);
 		
@@ -111,6 +114,17 @@ static Server *sharedInstance = nil;
 	}
 	[active_connections release];
 	active_connections = [[NSArray alloc] initWithArray:existing_connections];
+}
+
+- (void)terminateExistingConnections {
+	for (ServerConnection *connected in active_connections) {
+		[connected terminateConnection];
+		[connected resetTimeoutCounter];
+	}
+	if (client_cleanup != nil) {
+		[client_cleanup invalidate];
+		[client_cleanup release];
+	}
 }
 
 @end

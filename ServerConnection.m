@@ -67,8 +67,9 @@
 	if (client_timeout != nil) {
 		[client_timeout invalidate];
 		[client_timeout release];
-	}		
-	[self beginTimeoutCounter];
+	}
+	if (is_active)
+		[self beginTimeoutCounter];
 }
 
 - (void)dealloc {
