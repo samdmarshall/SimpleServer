@@ -35,6 +35,7 @@ static Server *sharedInstance = nil;
 		memset(&server_address, 0, sizeof(server_address));
 		run_state = false;
 		active_connections = [[NSArray alloc] init];
+		[NSTimer scheduledTimerWithTimeInterval:10 target:self selector:@selector(disconnectTimedOutSessions) userInfo:nil repeats:YES];
 	}
 	return self;
 }
@@ -82,7 +83,6 @@ static Server *sharedInstance = nil;
 
 - (int16_t)generateNewPort {
 	uint16_t a_port = (rand()%(65535-49152))+49152;
-	printf("send to port: %i\n", a_port);
 	for (ServerConnection *connected in active_connections) {
 		if (connected.port == a_port)
 			return [self generateNewPort];
@@ -93,6 +93,16 @@ static Server *sharedInstance = nil;
 - (void)addNewClientConnection:(ServerConnection *)connector {
 	NSMutableArray *existing_connections = [[[NSMutableArray alloc] initWithArray:self.active_connections] autorelease];
 	[existing_connections addObject:connector];
+	[active_connections release];
+	active_connections = [[NSArray alloc] initWithArray:existing_connections];
+}
+
+- (void)disconnectTimedOutSessions {
+	NSMutableArray *existing_connections = [[[NSMutableArray alloc] initWithArray:self.active_connections] autorelease];
+	for (ServerConnection *connected in active_connections) {
+		if (!connected.is_active)
+			[existing_connections removeObject:connected];
+	}
 	[active_connections release];
 	active_connections = [[NSArray alloc] initWithArray:existing_connections];
 }

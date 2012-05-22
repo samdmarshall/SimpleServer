@@ -31,5 +31,6 @@
 - (id)initWithPort:(int16_t)port_num fromIP:(int32_t)client;
 - (void)activateConnection;
 - (void)terminateConnection;
-
+- (void)beginTimeoutCounter;
+- (void)resetTimeoutCounter;
 @end

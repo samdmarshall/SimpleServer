@@ -60,13 +60,14 @@
 }
 
 - (void)beginTimeoutCounter {
-	if (client_timeout == nil) {
-		client_timeout = [NSTimer scheduledTimerWithTimeInterval:30 target:self selector:@selector(terminateConnection) userInfo:nil repeats:NO];
-	}
+	client_timeout = [NSTimer scheduledTimerWithTimeInterval:30 target:self selector:@selector(terminateConnection) userInfo:nil repeats:NO];
 }
 
 - (void)resetTimeoutCounter {
-	client_timeout = nil;
+	if (client_timeout != nil) {
+		[client_timeout invalidate];
+		[client_timeout release];
+	}		
 	[self beginTimeoutCounter];
 }
 
