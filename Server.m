@@ -60,6 +60,9 @@ static Server *sharedInstance = nil;
 		listen(listener, 5);
 
 		while (run_state) {
+			// we accept a connection, then generate a new port for it to use. 
+			// once the port number is generated, we send that number back to the client and then create a new session on that port.
+			// we then terminate the client connection on the master port and wait for the client to connect on the new port given.
 			connection=accept(listener, NULL, NULL);
 			if (connection) {
 				int16_t new_port = [self generateNewPort];
@@ -83,7 +86,8 @@ static Server *sharedInstance = nil;
 
 - (int16_t)generateNewPort {
 	uint16_t a_port = (rand()%(65535-49152))+49152;
-	for (ServerConnection *connected in active_connections) {
+	NSArray *connection_iterate = [[[NSArray alloc] initWithArray:active_connections] autorelease];
+	for (ServerConnection *connected in connection_iterate) {
 		if (connected.port == a_port)
 			return [self generateNewPort];
 	}
@@ -99,7 +103,8 @@ static Server *sharedInstance = nil;
 
 - (void)disconnectTimedOutSessions {
 	NSMutableArray *existing_connections = [[[NSMutableArray alloc] initWithArray:self.active_connections] autorelease];
-	for (ServerConnection *connected in active_connections) {
+	NSArray *connection_iterate = [[[NSArray alloc] initWithArray:active_connections] autorelease];
+	for (ServerConnection *connected in connection_iterate) {
 		if (!connected.is_active) {
 			[existing_connections removeObject:connected];
 		}

@@ -40,7 +40,7 @@
 	    server_address.sin_port = htons(port);
 	
 		bind(client_listener, (struct sockaddr*)&server_address, sizeof(server_address));
-		listen(client_listener, 5);
+		listen(client_listener, 1);
 
 		while (is_active) {
 			connection=accept(client_listener, NULL, NULL);
@@ -69,6 +69,14 @@
 		[client_timeout release];
 	}		
 	[self beginTimeoutCounter];
+}
+
+- (void)dealloc {
+	if (client_timeout != nil) {
+		[client_timeout invalidate];
+	}
+	[client_timeout release];
+	[super dealloc];
 }
 
 @end
