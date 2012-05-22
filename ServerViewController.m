@@ -19,7 +19,7 @@
 	[self setServerButtonAction];
 	[ServerButton setTarget:self];
 	[IPAddress setStringValue:[[Server sharedInstance] getServerIP]];
-	[PortNumber setStringValue:@"1234"];
+	[PortNumber setStringValue:[NSString stringWithFormat:@"%i",[Server sharedInstance].port]];
 }
 
 - (void)setServerButtonAction {

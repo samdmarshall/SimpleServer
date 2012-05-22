@@ -39,5 +39,7 @@
 - (NSString *)getServerIP;
 - (int16_t)generateNewPort;
 - (void)addNewClientConnection:(ServerConnection *)connector;
+- (void)disconnectTimedOutSessions;
+- (void)terminateExistingConnections;
 
 @end
