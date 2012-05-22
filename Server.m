@@ -92,16 +92,17 @@ static Server *sharedInstance = nil;
 
 - (void)addNewClientConnection:(ServerConnection *)connector {
 	NSMutableArray *existing_connections = [[[NSMutableArray alloc] initWithArray:self.active_connections] autorelease];
-	[existing_connections addObject:connector];
 	[active_connections release];
+	[existing_connections addObject:connector];
 	active_connections = [[NSArray alloc] initWithArray:existing_connections];
 }
 
 - (void)disconnectTimedOutSessions {
 	NSMutableArray *existing_connections = [[[NSMutableArray alloc] initWithArray:self.active_connections] autorelease];
 	for (ServerConnection *connected in active_connections) {
-		if (!connected.is_active)
+		if (!connected.is_active) {
 			[existing_connections removeObject:connected];
+		}
 	}
 	[active_connections release];
 	active_connections = [[NSArray alloc] initWithArray:existing_connections];
