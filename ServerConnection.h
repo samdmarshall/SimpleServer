@@ -16,16 +16,20 @@
 @interface ServerConnection : NSObject {
 	int32_t client_listener;
 	int32_t connection;
-	int16_t port;
+	uint16_t port;
 	struct sockaddr_in server_address;
 	BOOL is_active;
+	NSTimer *client_timeout;
 }
 @property (nonatomic, readonly) int32_t client_listener;
 @property (nonatomic, readonly) int32_t connection;
-@property (nonatomic, readonly) int16_t port;
+@property (nonatomic, readonly) uint16_t port;
 @property (nonatomic, readonly) struct sockaddr_in server_address;
 @property (readonly) BOOL is_active;
+@property (nonatomic, readonly) NSTimer *client_timeout;
 
 - (id)initWithPort:(int16_t)port_num fromIP:(int32_t)client;
+- (void)activateConnection;
+- (void)terminateConnection;
 
 @end

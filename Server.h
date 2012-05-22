@@ -17,21 +17,21 @@
 @interface Server : NSObject {
 	int32_t listener;
 	int32_t connection;
-	int16_t port;
+	uint16_t port;
 	struct sockaddr_in server_address;
 	BOOL run_state;
 	NSArray *active_connections;
 }
 @property (nonatomic, readonly) int32_t listener;
 @property (nonatomic, readonly) int32_t connection;
-@property (nonatomic, readonly) int16_t port;
+@property (nonatomic, readonly) uint16_t port;
 @property (nonatomic, readonly) struct sockaddr_in server_address;
 @property (readonly) BOOL run_state;
 @property (nonatomic, readonly) NSArray *active_connections;
 
 + (Server *)sharedInstance;
 - (id)init;
-- (void)setPort:(int16_t)port_number;
+- (void)setPort:(uint16_t)port_number;
 - (void)setServerState:(BOOL)state;
 - (void)runServer;
 - (NSString *)getServerIP;

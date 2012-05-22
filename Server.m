@@ -39,7 +39,7 @@ static Server *sharedInstance = nil;
 	return self;
 }
 
-- (void)setPort:(int16_t)port_number {
+- (void)setPort:(uint16_t)port_number {
 	port = port_number;
 }
 
@@ -81,7 +81,8 @@ static Server *sharedInstance = nil;
 }
 
 - (int16_t)generateNewPort {
-	int16_t a_port = ((double) rand() / (65535+1)) * (65535-49152+1) + 49152;
+	uint16_t a_port = (rand()%(65535-49152))+49152;
+	printf("send to port: %i\n", a_port);
 	for (ServerConnection *connected in active_connections) {
 		if (connected.port == a_port)
 			return [self generateNewPort];
