@@ -10,6 +10,7 @@
 		1DDD58160DA1D0A300B32029 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1DDD58140DA1D0A300B32029 /* MainMenu.xib */; };
 		22E96D36156AF4630094C595 /* ServerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 22E96D34156AF4630094C595 /* ServerViewController.m */; };
 		22E96D73156AF6A00094C595 /* Server.m in Sources */ = {isa = PBXBuildFile; fileRef = 22E96D72156AF6A00094C595 /* Server.m */; };
+		22E96E1A156B09900094C595 /* ServerConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 22E96E19156B09900094C595 /* ServerConnection.m */; };
 		256AC3DA0F4B6AC300CF3369 /* ServerAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 256AC3D90F4B6AC300CF3369 /* ServerAppDelegate.m */; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
@@ -25,6 +26,8 @@
 		22E96D35156AF4630094C595 /* ServerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServerViewController.h; sourceTree = "<group>"; };
 		22E96D71156AF6A00094C595 /* Server.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Server.h; sourceTree = "<group>"; };
 		22E96D72156AF6A00094C595 /* Server.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Server.m; sourceTree = "<group>"; };
+		22E96E18156B09900094C595 /* ServerConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServerConnection.h; sourceTree = "<group>"; };
+		22E96E19156B09900094C595 /* ServerConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ServerConnection.m; sourceTree = "<group>"; };
 		256AC3D80F4B6AC300CF3369 /* ServerAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServerAppDelegate.h; sourceTree = "<group>"; };
 		256AC3D90F4B6AC300CF3369 /* ServerAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ServerAppDelegate.m; sourceTree = "<group>"; };
 		256AC3F00F4B6AF500CF3369 /* Server_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Server_Prefix.pch; sourceTree = "<group>"; };
@@ -94,6 +97,8 @@
 				22E96D35156AF4630094C595 /* ServerViewController.h */,
 				22E96D71156AF6A00094C595 /* Server.h */,
 				22E96D72156AF6A00094C595 /* Server.m */,
+				22E96E18156B09900094C595 /* ServerConnection.h */,
+				22E96E19156B09900094C595 /* ServerConnection.m */,
 			);
 			name = Server;
 			sourceTree = "<group>";
@@ -192,6 +197,7 @@
 				256AC3DA0F4B6AC300CF3369 /* ServerAppDelegate.m in Sources */,
 				22E96D36156AF4630094C595 /* ServerViewController.m in Sources */,
 				22E96D73156AF6A00094C595 /* Server.m in Sources */,
+				22E96E1A156B09900094C595 /* ServerConnection.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

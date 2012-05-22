@@ -16,6 +16,7 @@
 @synthesize port;
 @synthesize server_address;
 @synthesize run_state;
+@synthesize active_connections;
 
 static Server *sharedInstance = nil;
 
@@ -33,6 +34,7 @@ static Server *sharedInstance = nil;
 		port = 1234; //default port
 		memset(&server_address, 0, sizeof(server_address));
 		run_state = false;
+		active_connections = [[NSArray alloc] init];
 	}
 	return self;
 }
@@ -54,18 +56,20 @@ static Server *sharedInstance = nil;
 	    server_address.sin_port = htons(port);
 	
 		bind(listener, (struct sockaddr*)&server_address, sizeof(server_address));
-		listen(listener, 1);
+		listen(listener, 5);
 
 		while (run_state) {
 			connection=accept(listener, NULL, NULL);
 			if (connection) {
-				char response[256];
-				read(connection, response, 256);
-				write(connection, "world!\n", 8);
+				int16_t new_port = [self generateNewPort];
+				write(connection, &new_port, sizeof(int16_t));
+				ServerConnection *new_connection = [[ServerConnection alloc] initWithPort:new_port fromIP:connection];
+				[new_connection activateConnection];
+				[self addNewClientConnection:new_connection];
 			}
+			close(connection);
 		}
 		close(listener);
-		close(connection);
 	});
 }
 
@@ -74,6 +78,22 @@ static Server *sharedInstance = nil;
 	gethostname(host_buffer, 200) ;
 	struct hostent* local_host = (struct hostent*)gethostbyname(host_buffer);
 	return [NSString stringWithCString:(inet_ntoa(*((struct in_addr *)local_host->h_addr))) encoding:NSASCIIStringEncoding];
+}
+
+- (int16_t)generateNewPort {
+	int16_t a_port = ((double) rand() / (65535+1)) * (65535-49152+1) + 49152;
+	for (ServerConnection *connected in active_connections) {
+		if (connected.port == a_port)
+			return [self generateNewPort];
+	}
+	return a_port;
+}
+
+- (void)addNewClientConnection:(ServerConnection *)connector {
+	NSMutableArray *existing_connections = [[[NSMutableArray alloc] initWithArray:self.active_connections] autorelease];
+	[existing_connections addObject:connector];
+	[active_connections release];
+	active_connections = [[NSArray alloc] initWithArray:existing_connections];
 }
 
 @end

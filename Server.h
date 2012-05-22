@@ -12,6 +12,7 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <netdb.h>
+#import "ServerConnection.h"
 
 @interface Server : NSObject {
 	int32_t listener;
@@ -19,12 +20,14 @@
 	int16_t port;
 	struct sockaddr_in server_address;
 	BOOL run_state;
+	NSArray *active_connections;
 }
 @property (nonatomic, readonly) int32_t listener;
 @property (nonatomic, readonly) int32_t connection;
 @property (nonatomic, readonly) int16_t port;
 @property (nonatomic, readonly) struct sockaddr_in server_address;
 @property (readonly) BOOL run_state;
+@property (nonatomic, readonly) NSArray *active_connections;
 
 + (Server *)sharedInstance;
 - (id)init;
@@ -32,5 +35,7 @@
 - (void)setServerState:(BOOL)state;
 - (void)runServer;
 - (NSString *)getServerIP;
+- (int16_t)generateNewPort;
+- (void)addNewClientConnection:(ServerConnection *)connector;
 
 @end
