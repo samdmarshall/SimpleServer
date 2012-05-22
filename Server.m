@@ -125,6 +125,7 @@ static Server *sharedInstance = nil;
 		[client_cleanup invalidate];
 		[client_cleanup release];
 	}
+	[self disconnectTimedOutSessions];
 }
 
 @end
