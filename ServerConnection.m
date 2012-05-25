@@ -38,7 +38,7 @@
 		
 		server_address.sin_family = AF_INET;
 	    server_address.sin_addr.s_addr = INADDR_ANY;
-	    server_address.sin_port = port;
+	    server_address.sin_port = htons(port);
 	
 		bind(client_listener, (struct sockaddr*)&server_address, sizeof(server_address));
 		listen(client_listener, 5);

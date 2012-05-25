@@ -75,9 +75,8 @@ static Server *sharedInstance = nil;
 				// code 1000 == OK
 				// code 500 == bad port recieved - abort
 				if (result == 1000) {
-					ServerConnection *new_connection = [[ServerConnection alloc] initWithPort:new_port fromIP:connection];
+					ServerConnection *new_connection = [[ServerConnection alloc] initWithPort:ntohs(new_port) fromIP:connection];
 					[self performSelectorOnMainThread:@selector(addNewClientConnection:) withObject:new_connection waitUntilDone:YES];
-					//[self addNewClientConnection:new_connection];
 					result = htons(result);
 					send(connection, &result, sizeof(uint16_t), 0);
 				}
@@ -89,8 +88,8 @@ static Server *sharedInstance = nil;
 }
 
 - (NSString *)getServerIP {
-	char host_buffer[200];
-	gethostname(host_buffer, 200) ;
+	char host_buffer[512];
+	gethostname(host_buffer, 512) ;
 	struct hostent* local_host = (struct hostent*)gethostbyname(host_buffer);
 	return [NSString stringWithCString:(inet_ntoa(*((struct in_addr *)local_host->h_addr))) encoding:NSASCIIStringEncoding];
 }
@@ -119,7 +118,8 @@ static Server *sharedInstance = nil;
 	for (ServerConnection *connected in connection_iterate) {
 		if (!connected.is_active) {
 			[existing_connections removeObject:connected];
-			NSLog(@"Removing timed-out session connection and freeing a port.");
+			[connected release];
+			//NSLog(@"Removing timed-out session connection and freeing a port.");
 		}
 	}
 	[active_connections release];
