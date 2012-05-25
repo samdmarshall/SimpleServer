@@ -77,9 +77,10 @@ static Server *sharedInstance = nil;
 				if (result == 1000) {
 					ServerConnection *new_connection = [[ServerConnection alloc] initWithPort:ntohs(new_port) fromIP:connection];
 					[self performSelectorOnMainThread:@selector(addNewClientConnection:) withObject:new_connection waitUntilDone:YES];
-					result = htons(result);
-					send(connection, &result, sizeof(uint16_t), 0);
 				}
+				// check against something, internal blacklist for IP then return respective code response.
+				result = htons(result);
+				send(connection, &result, sizeof(uint16_t), 0);
 			}
 			close(connection);
 		}
@@ -116,9 +117,8 @@ static Server *sharedInstance = nil;
 	NSMutableArray *existing_connections = [[[NSMutableArray alloc] initWithArray:active_connections] autorelease];
 	NSArray *connection_iterate = [[[NSArray alloc] initWithArray:active_connections] autorelease];
 	for (ServerConnection *connected in connection_iterate) {
-		if (!connected.is_active) {
+		if (!connected.is_active)
 			[existing_connections removeObject:connected];
-		}
 	}
 	[active_connections release];
 	active_connections = [[NSArray alloc] initWithArray:existing_connections];
