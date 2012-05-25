@@ -32,6 +32,7 @@
 
 - (void)activateConnection {
 	is_active = true;
+	[self performSelectorOnMainThread:@selector(beginTimeoutCounter) withObject:nil waitUntilDone:YES];
 	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,0), ^{
 		client_listener = socket(AF_INET, SOCK_STREAM, 0);
 		
@@ -41,13 +42,11 @@
 	
 		bind(client_listener, (struct sockaddr*)&server_address, sizeof(server_address));
 		listen(client_listener, 1);
-
 		while (is_active) {
 			connection=accept(client_listener, NULL, NULL);
 			if (connection) {
-				[self beginTimeoutCounter];
 				// here we talk with the client.
-				[self resetTimeoutCounter];
+				[self performSelectorOnMainThread:@selector(resetTimeoutCounter) withObject:nil waitUntilDone:YES];
 			}
 		}
 		close(client_listener);
@@ -55,12 +54,16 @@
 	});
 }
 
+- (void)sessionTimeOut:(NSTimer *)timer {
+	[self terminateConnection];
+}
+
 - (void)terminateConnection {
 	is_active = false;
 }
 
 - (void)beginTimeoutCounter {
-	client_timeout = [NSTimer scheduledTimerWithTimeInterval:30 target:self selector:@selector(terminateConnection) userInfo:nil repeats:NO];
+	client_timeout = [NSTimer scheduledTimerWithTimeInterval:30.0 target:self selector:@selector(sessionTimeOut:) userInfo:nil repeats:NO];
 }
 
 - (void)resetTimeoutCounter {

@@ -33,4 +33,6 @@
 - (void)terminateConnection;
 - (void)beginTimeoutCounter;
 - (void)resetTimeoutCounter;
+- (void)sessionTimeOut:(NSTimer *)timer;
+
 @end

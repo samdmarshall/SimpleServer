@@ -17,7 +17,6 @@
 @synthesize server_address;
 @synthesize run_state;
 @synthesize active_connections;
-@synthesize client_cleanup;
 
 static Server *sharedInstance = nil;
 
@@ -51,7 +50,6 @@ static Server *sharedInstance = nil;
 }
 
 - (void)runServer {
-	client_cleanup = [NSTimer scheduledTimerWithTimeInterval:10 target:self selector:@selector(disconnectTimedOutSessions) userInfo:nil repeats:YES];
 	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,0), ^{
 		listener = socket(AF_INET, SOCK_STREAM, 0);
 		
@@ -63,16 +61,22 @@ static Server *sharedInstance = nil;
 		listen(listener, 5);
 
 		while (run_state) {
+			[self disconnectTimedOutSessions];
 			// we accept a connection, then generate a new port for it to use. 
 			// once the port number is generated, we send that number back to the client and then create a new session on that port.
 			// we then terminate the client connection on the master port and wait for the client to connect on the new port given.
 			connection=accept(listener, NULL, NULL);
 			if (connection) {
-				int16_t new_port = [self generateNewPort];
-				write(connection, &new_port, sizeof(int16_t));
-				ServerConnection *new_connection = [[ServerConnection alloc] initWithPort:new_port fromIP:connection];
-				[new_connection activateConnection];
-				[self addNewClientConnection:new_connection];
+				uint16_t new_port = htons([self generateNewPort]);
+				uint16_t result = 0;
+				send(connection, &new_port, sizeof(new_port), 0);
+				recv(connection, &result, sizeof(uint16_t), 0);
+				result = ntohs(result);
+				if (result == 1000) {
+					ServerConnection *new_connection = [[ServerConnection alloc] initWithPort:new_port fromIP:connection];
+					[new_connection activateConnection];
+					[self addNewClientConnection:new_connection];	
+				}
 			}
 			close(connection);
 		}
@@ -87,25 +91,25 @@ static Server *sharedInstance = nil;
 	return [NSString stringWithCString:(inet_ntoa(*((struct in_addr *)local_host->h_addr))) encoding:NSASCIIStringEncoding];
 }
 
-- (int16_t)generateNewPort {
+- (uint16_t)generateNewPort {
 	uint16_t a_port = (rand()%(65535-49152))+49152;
 	NSArray *connection_iterate = [[[NSArray alloc] initWithArray:active_connections] autorelease];
 	for (ServerConnection *connected in connection_iterate) {
-		if (connected.port == a_port)
+		if (connected.port == a_port && connected.is_active)
 			return [self generateNewPort];
 	}
 	return a_port;
 }
 
 - (void)addNewClientConnection:(ServerConnection *)connector {
-	NSMutableArray *existing_connections = [[[NSMutableArray alloc] initWithArray:self.active_connections] autorelease];
+	NSMutableArray *existing_connections = [[[NSMutableArray alloc] initWithArray:active_connections] autorelease];
 	[active_connections release];
 	[existing_connections addObject:connector];
 	active_connections = [[NSArray alloc] initWithArray:existing_connections];
 }
 
 - (void)disconnectTimedOutSessions {
-	NSMutableArray *existing_connections = [[[NSMutableArray alloc] initWithArray:self.active_connections] autorelease];
+	NSMutableArray *existing_connections = [[[NSMutableArray alloc] initWithArray:active_connections] autorelease];
 	NSArray *connection_iterate = [[[NSArray alloc] initWithArray:active_connections] autorelease];
 	for (ServerConnection *connected in connection_iterate) {
 		if (!connected.is_active) {
@@ -120,10 +124,6 @@ static Server *sharedInstance = nil;
 	for (ServerConnection *connected in active_connections) {
 		[connected terminateConnection];
 		[connected resetTimeoutCounter];
-	}
-	if (client_cleanup != nil) {
-		[client_cleanup invalidate];
-		[client_cleanup release];
 	}
 	[self disconnectTimedOutSessions];
 }

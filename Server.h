@@ -21,7 +21,6 @@
 	struct sockaddr_in server_address;
 	BOOL run_state;
 	NSArray *active_connections;
-	NSTimer *client_cleanup;
 }
 @property (nonatomic, readonly) int32_t listener;
 @property (nonatomic, readonly) int32_t connection;
@@ -29,7 +28,6 @@
 @property (nonatomic, readonly) struct sockaddr_in server_address;
 @property (readonly) BOOL run_state;
 @property (nonatomic, readonly) NSArray *active_connections;
-@property (nonatomic, readonly) NSTimer *client_cleanup;
 
 + (Server *)sharedInstance;
 - (id)init;
@@ -37,7 +35,7 @@
 - (void)setServerState:(BOOL)state;
 - (void)runServer;
 - (NSString *)getServerIP;
-- (int16_t)generateNewPort;
+- (uint16_t)generateNewPort;
 - (void)addNewClientConnection:(ServerConnection *)connector;
 - (void)disconnectTimedOutSessions;
 - (void)terminateExistingConnections;
