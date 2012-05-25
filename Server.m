@@ -72,10 +72,14 @@ static Server *sharedInstance = nil;
 				send(connection, &new_port, sizeof(new_port), 0);
 				recv(connection, &result, sizeof(uint16_t), 0);
 				result = ntohs(result);
+				// code 1000 == OK
+				// code 500 == bad port recieved - abort
 				if (result == 1000) {
 					ServerConnection *new_connection = [[ServerConnection alloc] initWithPort:new_port fromIP:connection];
-					[new_connection activateConnection];
-					[self addNewClientConnection:new_connection];	
+					[self performSelectorOnMainThread:@selector(addNewClientConnection:) withObject:new_connection waitUntilDone:YES];
+					//[self addNewClientConnection:new_connection];
+					result = htons(result);
+					send(connection, &result, sizeof(uint16_t), 0);
 				}
 			}
 			close(connection);
@@ -104,6 +108,7 @@ static Server *sharedInstance = nil;
 - (void)addNewClientConnection:(ServerConnection *)connector {
 	NSMutableArray *existing_connections = [[[NSMutableArray alloc] initWithArray:active_connections] autorelease];
 	[active_connections release];
+	[connector activateConnection];
 	[existing_connections addObject:connector];
 	active_connections = [[NSArray alloc] initWithArray:existing_connections];
 }
@@ -114,6 +119,7 @@ static Server *sharedInstance = nil;
 	for (ServerConnection *connected in connection_iterate) {
 		if (!connected.is_active) {
 			[existing_connections removeObject:connected];
+			NSLog(@"Removing timed-out session connection and freeing a port.");
 		}
 	}
 	[active_connections release];
@@ -123,7 +129,6 @@ static Server *sharedInstance = nil;
 - (void)terminateExistingConnections {
 	for (ServerConnection *connected in active_connections) {
 		[connected terminateConnection];
-		[connected resetTimeoutCounter];
 	}
 	[self disconnectTimedOutSessions];
 }
