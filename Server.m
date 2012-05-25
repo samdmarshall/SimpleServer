@@ -98,7 +98,7 @@ static Server *sharedInstance = nil;
 	uint16_t a_port = (rand()%(65535-49152))+49152;
 	NSArray *connection_iterate = [[[NSArray alloc] initWithArray:active_connections] autorelease];
 	for (ServerConnection *connected in connection_iterate) {
-		if (connected.port == a_port && connected.is_active)
+		if ((connected.port == a_port && connected.is_active) || (port == a_port));
 			return [self generateNewPort];
 	}
 	return a_port;
@@ -118,7 +118,6 @@ static Server *sharedInstance = nil;
 	for (ServerConnection *connected in connection_iterate) {
 		if (!connected.is_active) {
 			[existing_connections removeObject:connected];
-			//NSLog(@"Removing timed-out session connection and freeing a port.");
 		}
 	}
 	[active_connections release];
