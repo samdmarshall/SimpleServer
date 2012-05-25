@@ -12,8 +12,8 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="29"/>
 			<integer value="371"/>
+			<integer value="29"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -2720,6 +2720,7 @@
 							<reference ref="439893737"/>
 						</object>
 						<reference key="parent" ref="0"/>
+						<string key="objectName">Server</string>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">372</int>

@@ -118,7 +118,6 @@ static Server *sharedInstance = nil;
 	for (ServerConnection *connected in connection_iterate) {
 		if (!connected.is_active) {
 			[existing_connections removeObject:connected];
-			[connected release];
 			//NSLog(@"Removing timed-out session connection and freeing a port.");
 		}
 	}
