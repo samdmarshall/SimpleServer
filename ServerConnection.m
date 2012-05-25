@@ -44,47 +44,42 @@
 		listen(client_listener, 5);
 		
 		connection=accept(client_listener, NULL, NULL);
-		is_active = (connection != -1 ? true : false);
+		bool data_session = (connection != -1 ? true : false);
 				
-		while (is_active) {
+		while (data_session) {
 			// here we talk with the client.
 		    int64_t random_data = 151691786587165;
 		    size_t sent = send(connection, &random_data, sizeof(int64_t), 0);
 		    size_t received = recv(connection, &random_data, sizeof(int64_t), 0);
-		    is_active = ( (sent > 0 && received > 0) ? true : false);
+		    data_session = ( (sent > 0 && received > 0) ? true : false);
 		}
 		close(client_listener);
 		close(connection);
+		[self performSelectorOnMainThread:@selector(terminateConnection) withObject:nil waitUntilDone:YES];	
 	});
 }
 
 - (void)sessionTimeOut:(NSTimer *)timer {
-	@synchronized(self) {
-		if (!is_active) {
-			NSLog(@"session has ended");
-			[self performSelectorOnMainThread:@selector(terminateConnection) withObject:nil waitUntilDone:YES];	
-		}	
-	}
+	NSLog(@"The session has timed-out.");
+	[self performSelectorOnMainThread:@selector(terminateConnection) withObject:nil waitUntilDone:YES];
 }
 
 - (void)terminateConnection {
-	if (client_timeout != nil) {
-		[client_timeout invalidate];
-		[client_timeout release];
+	if (is_active) {
+		if ([client_timeout isValid]) {
+			[client_timeout invalidate];
+		}			
+		is_active = false;
+		NSLog(@"The connection has been ended.");
 	}
-	is_active = false;
-	NSLog(@"connection has been ended");
 }
 
 - (void)beginTimeoutCounter {
-	NSLog(@"creating time-out session timer.");
+	NSLog(@"Creating new session...");
 	client_timeout = [NSTimer scheduledTimerWithTimeInterval:10.0 target:self selector:@selector(sessionTimeOut:) userInfo:nil repeats:YES];
 }
 
 - (void)dealloc {
-	if (client_timeout != nil) {
-		[client_timeout invalidate];
-	}
 	[client_timeout release];
 	[super dealloc];
 }

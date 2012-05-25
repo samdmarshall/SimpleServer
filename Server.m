@@ -127,7 +127,7 @@ static Server *sharedInstance = nil;
 
 - (void)terminateExistingConnections {
 	for (ServerConnection *connected in active_connections) {
-		[connected terminateConnection];
+		[connected performSelectorOnMainThread:@selector(terminateConnection) withObject:nil waitUntilDone:YES];
 	}
 	[self disconnectTimedOutSessions];
 }
