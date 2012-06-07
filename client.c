@@ -9,8 +9,7 @@
 #include <string.h>
 
 int main (int argc, const char * argv[]) {
-	
-	if (argc == 3) {
+	if (argc == 3) {		
 		char *end;
 		uint16_t port = strtol(argv[2], &end, 0);
 		
@@ -54,8 +53,6 @@ int main (int argc, const char * argv[]) {
 			}
 			close(data_connection);
 		}
-
 	}
-	
     return 0;
 }

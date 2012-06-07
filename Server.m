@@ -67,8 +67,10 @@ static Server *sharedInstance = nil;
 			// we then terminate the client connection on the master port and wait for the client to connect on the new port given.
 			connection=accept(listener, NULL, NULL);
 			if (connection) {
-				uint16_t new_port = htons([self generateNewPort]);
+				uint16_t new_port = [self generateNewPort];
 				uint16_t result = 0;
+#ifndef CONFIGURATION_WebServer
+				new_port = htons(new_port);
 				send(connection, &new_port, sizeof(new_port), 0);
 				recv(connection, &result, sizeof(uint16_t), 0);
 				result = ntohs(result);
@@ -81,6 +83,14 @@ static Server *sharedInstance = nil;
 				// check against something, internal blacklist for IP then return respective code response.
 				result = htons(result);
 				send(connection, &result, sizeof(uint16_t), 0);
+#else
+				ServerConnection *new_connection = [[ServerConnection alloc] initWithPort:new_port fromIP:connection];
+				[self performSelectorOnMainThread:@selector(addNewClientConnection:) withObject:new_connection waitUntilDone:YES];
+				char *buffer;
+				char *http_redirect = [[NSString stringWithFormat:@"HTTP/1.1 200 OK\nDate: Thu, 19 Feb 2009 12:27:04 GMT\nServer: Apache/2.2.3\nLast-Modified: Wed, 18 Jun 2003 16:05:58 GMT\nETag: \"56d-9989200-1132c580\"\nContent-Type: text/html\nContent-Length: %i\nAccept-Ranges: bytes\nConnection: close\n\n<HTML><HEAD><META HTTP-EQUIV=\"refresh\" CONTENT=\"1;URL=http://%@:%i\"></HEAD><body></body></html>",[[self getServerIP] length]+343,[self getServerIP],new_port] cStringUsingEncoding:NSASCIIStringEncoding];
+				write(connection, http_redirect, strlen(http_redirect));
+				read(connection, buffer, 255);
+#endif
 			}
 			close(connection);
 		}
@@ -90,7 +100,7 @@ static Server *sharedInstance = nil;
 
 - (NSString *)getServerIP {
 	char host_buffer[512];
-	gethostname(host_buffer, 512) ;
+	gethostname(host_buffer, 512);
 	struct hostent* local_host = (struct hostent*)gethostbyname(host_buffer);
 	return [NSString stringWithCString:(inet_ntoa(*((struct in_addr *)local_host->h_addr))) encoding:NSASCIIStringEncoding];
 }
@@ -99,7 +109,7 @@ static Server *sharedInstance = nil;
 	uint16_t a_port = (rand()%(65535-49152))+49152;
 	NSArray *connection_iterate = [[[NSArray alloc] initWithArray:active_connections] autorelease];
 	for (ServerConnection *connected in connection_iterate) {
-		if ((connected.port == a_port && connected.is_active) || (port == a_port));
+		if ((connected.port == a_port && connected.is_active) || (port == a_port))
 			return [self generateNewPort];
 	}
 	return a_port;
