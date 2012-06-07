@@ -87,7 +87,7 @@ static Server *sharedInstance = nil;
 				ServerConnection *new_connection = [[ServerConnection alloc] initWithPort:new_port fromIP:connection];
 				[self performSelectorOnMainThread:@selector(addNewClientConnection:) withObject:new_connection waitUntilDone:YES];
 				char *buffer;
-				char *http_redirect = [[NSString stringWithFormat:@"HTTP/1.1 200 OK\nDate: Thu, 19 Feb 2009 12:27:04 GMT\nServer: Apache/2.2.3\nLast-Modified: Wed, 18 Jun 2003 16:05:58 GMT\nETag: \"56d-9989200-1132c580\"\nContent-Type: text/html\nContent-Length: %i\nAccept-Ranges: bytes\nConnection: close\n\n<HTML><HEAD><META HTTP-EQUIV=\"refresh\" CONTENT=\"1;URL=http://%@:%i\"></HEAD><body></body></html>",[[self getServerIP] length]+343,[self getServerIP],new_port] cStringUsingEncoding:NSASCIIStringEncoding];
+				char *http_redirect = [[NSString stringWithFormat:@"HTTP/1.1 200 OK\nDate: Thu, 7 June 2012 12:00:00 GMT\nServer: Apache/x.x.x\nLast-Modified: Thur, 7 June 2012 12:00:00 GMT\nETag: \"xxx-#######-####x###\"\nContent-Type: text/html\nContent-Length: %i\nAccept-Ranges: bytes\nConnection: close\n\n<HTML><HEAD><META HTTP-EQUIV=\"refresh\" CONTENT=\"1;URL=http://%@:%i\"></HEAD><body></body></html>",[[self getServerIP] length]+343,[self getServerIP],new_port] cStringUsingEncoding:NSASCIIStringEncoding];
 				write(connection, http_redirect, strlen(http_redirect));
 				read(connection, buffer, 255);
 #endif
